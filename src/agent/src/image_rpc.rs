@@ -144,8 +144,12 @@ impl ImageService {
             // Support multiple containers with same image
             let index = self.container_count.fetch_add(1, Ordering::Relaxed);
 
-            // ':' not valid for container id
-            format!("{}_{}", last.replace(':', "_"), index)
+            // We use the container id to create a sub-directory where to store
+            // image layers. Thus, any special characters present in a valid
+            // image name, but not valid for a directory name, need to be
+            // replaced. Thus, both ':' (as used for image tags) and '@'
+            // (as used for image digests) need to be ammended
+            format!("{}_{}", last.replace(':', "_").replace('@', "_"), index)
         } else {
             return Err(anyhow!("Invalid image name. {}", req.image()));
         };
@@ -166,6 +170,7 @@ impl ImageService {
             env::set_var("NO_PROXY", no_proxy);
         }
 
+        info!(sl(), "pull_image: as happily patched by csg");
         let cid = self.cid_from_request(req)?;
         let image = req.image();
         if cid.starts_with("pause") {
