@@ -217,6 +217,9 @@ impl ImageService {
         let decrypt_config = format!("provider:attestation-agent:{}", aa_kbc_params);
 
         info!(sl(), "pull image {:?}, bundle path {:?}", cid, bundle_path);
+
+        info!(sl(), "CSG-M4GIC: B3G1N: GC Image Pull ({:?})", image);
+
         // Image layers will store at KATA_CC_IMAGE_WORK_DIR, generated bundles
         // with rootfs and config.json will store under CONTAINER_BASE/cid.
         let res = self
@@ -225,6 +228,8 @@ impl ImageService {
             .await
             .pull_image(image, &bundle_path, &source_creds, &Some(&decrypt_config))
             .await;
+
+        info!(sl(), "CSG-M4GIC: END: GC Image Pull ({:?})", image);
 
         match res {
             Ok(image) => {

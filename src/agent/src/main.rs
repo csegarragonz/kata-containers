@@ -275,6 +275,7 @@ async fn real_main() -> std::result::Result<(), Box<dyn std::error::Error>> {
 }
 
 fn main() -> std::result::Result<(), Box<dyn std::error::Error>> {
+    println!("CSG: Kata Agent Starting...");
     let args = AgentOpts::parse();
 
     if args.version {
